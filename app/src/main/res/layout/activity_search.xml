@@ -36,7 +36,8 @@
             app:layout_constraintEnd_toStartOf="@+id/playButton"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:onClick="pauseButtonClicked"/>
 
         <ImageButton
             android:id="@+id/playButton"
@@ -47,7 +48,8 @@
             app:layout_constraintEnd_toStartOf="@+id/stopButton"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/pauseButton"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:onClick="playButtonClicked"/>
 
         <ImageButton
             android:id="@+id/stopButton"
@@ -58,7 +60,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/playButton"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:onClick="stopButtonClicked"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -66,13 +69,12 @@
         android:id="@+id/progressBar"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="30dp"
         android:layout_marginStart="32dp"
         android:layout_marginLeft="32dp"
         android:layout_marginEnd="32dp"
         android:layout_marginRight="32dp"
-        android:indeterminate="true"
-        android:indeterminateDrawable="@drawable/drawable_progress_bar"
+        android:progressDrawable="@drawable/drawable_progress_bar"
         app:layout_constraintBottom_toTopOf="@+id/controlButtonsLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

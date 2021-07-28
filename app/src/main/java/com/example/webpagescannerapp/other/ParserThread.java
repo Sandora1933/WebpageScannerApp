@@ -1,10 +1,10 @@
-package com.example.webpagescannerapp;
+package com.example.webpagescannerapp.other;
 
 import android.app.Activity;
-import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.webpagescannerapp.adapter.RequestAdapter;
 import com.example.webpagescannerapp.model.RequestInfo;
 import com.example.webpagescannerapp.model.Status;
 
@@ -18,16 +18,12 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import io.reactivex.rxjava3.core.Observable;
-import okhttp3.ConnectionPool;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
-import pl.droidsonroids.retrofit2.JspoonConverterFactory;
 import retrofit2.Call;
 import retrofit2.Converter;
 import retrofit2.Retrofit;

@@ -1,9 +1,11 @@
 package com.example.webpagescannerapp;
 
 import android.app.Activity;
+import android.widget.ProgressBar;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.webpagescannerapp.adapter.RequestAdapter;
 import com.example.webpagescannerapp.model.RequestInfo;
 import com.example.webpagescannerapp.model.Status;
 
@@ -15,7 +17,6 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -42,15 +43,17 @@ public class MyRunnable implements Runnable {
     RequestAdapter adapter;
     RecyclerView recyclerView;
     ArrayList<RequestInfo> adapterList;
+    ProgressBar progressBar;
 
     public MyRunnable(String url, Activity activity, RequestAdapter adapter, RecyclerView recyclerView,
-                      String textS, ArrayList<RequestInfo> adapterList) {
+                      String textS, ArrayList<RequestInfo> adapterList, ProgressBar progressBar) {
         this.url = url;
         this.activity = activity;
         this.adapter = adapter;
         this.recyclerView = recyclerView;
         this.textS = textS;
         this.adapterList = adapterList;
+        this.progressBar = progressBar;
         initOkHttp();
         initRetrofit();
     }
@@ -68,8 +71,13 @@ public class MyRunnable implements Runnable {
 //            else {
 //                html = "Exception: NULL";
 //            }
-            String html = pageCall.clone().execute().body().content;
-
+            String html;
+            try {
+                html = pageCall.clone().execute().body().content;
+            }
+            catch (NullPointerException ex){
+                html = ex.getMessage();
+            }
 
             int matchesCount = getMatchesNumberFromHtml(html, textS);
             //int threadNumber = Integer.parseInt(String.valueOf(this.getName().toCharArray()[this.getName().toCharArray().length-1]));
@@ -82,6 +90,7 @@ public class MyRunnable implements Runnable {
                 adapterList.add(requestInfo);
                 adapter.notifyDataSetChanged();
                 recyclerView.smoothScrollToPosition(adapter.getItemCount() - 1);
+                progressBar.incrementProgressBy(1);
             });
 
         } catch (IOException e) {

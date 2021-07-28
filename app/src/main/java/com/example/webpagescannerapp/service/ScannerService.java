@@ -1,4 +1,4 @@
-package com.example.webpagescannerapp;
+package com.example.webpagescannerapp.service;
 
 import android.app.Activity;
 import android.os.Build;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
-public class ScannerService1 {
+public class ScannerService {
 
     private OkHttpClient client;
     //private ArrayList<AbstractMap.SimpleEntry<Integer, String>> list;
@@ -31,7 +31,7 @@ public class ScannerService1 {
     private int maxLinkNumber, currentLinkNumber;
     private int currentLevel;
 
-    public ScannerService1(OkHttpClient client, String myBaseUrl, int myMaxLinksNumber){
+    public ScannerService(OkHttpClient client, String myBaseUrl, int myMaxLinksNumber){
         this.client = client;
         this.baseUrl = myBaseUrl;
         currentUrl = myBaseUrl;

@@ -1,4 +1,4 @@
-package com.example.webpagescannerapp;
+package com.example.webpagescannerapp.other;
 
 import android.text.method.PasswordTransformationMethod;
 import android.view.View;

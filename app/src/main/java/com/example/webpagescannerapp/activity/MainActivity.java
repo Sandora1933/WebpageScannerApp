@@ -12,9 +12,8 @@ import android.widget.EditText;
 import android.widget.NumberPicker;
 import android.widget.Toast;
 
-import com.example.webpagescannerapp.NumericKeyBoardTransformationMethod;
+import com.example.webpagescannerapp.other.NumericKeyBoardTransformationMethod;
 import com.example.webpagescannerapp.R;
-import com.example.webpagescannerapp.SearchActivity;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

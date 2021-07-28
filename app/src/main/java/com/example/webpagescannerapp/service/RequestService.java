@@ -1,4 +1,4 @@
-package com.example.webpagescannerapp;
+package com.example.webpagescannerapp.service;
 
 import android.app.Activity;
 import android.content.Context;
@@ -14,33 +14,19 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.Observable;
-import io.reactivex.rxjava3.core.Observer;
-import io.reactivex.rxjava3.core.Scheduler;
-import io.reactivex.rxjava3.disposables.Disposable;
-import io.reactivex.rxjava3.functions.Function;
-import io.reactivex.rxjava3.functions.Function3;
-import io.reactivex.rxjava3.schedulers.Schedulers;
 import okhttp3.ConnectionPool;
 import okhttp3.Dispatcher;
-import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Converter;
-import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.http.GET;
 
@@ -76,7 +62,7 @@ public class RequestService {
         retrofit = new Retrofit.Builder()
                 .baseUrl("")
                 .client(this.okHttpClient)
-                .addConverterFactory(SecondClass.PageAdapter.FACTORY)
+                .addConverterFactory(RequestService.PageAdapter.FACTORY)
                 .build();
     }
 

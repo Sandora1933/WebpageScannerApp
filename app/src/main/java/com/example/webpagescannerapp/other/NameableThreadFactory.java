@@ -1,4 +1,4 @@
-package com.example.webpagescannerapp;
+package com.example.webpagescannerapp.other;
 
 import java.util.concurrent.ThreadFactory;
 
