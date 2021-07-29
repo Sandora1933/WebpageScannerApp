@@ -1,4 +1,4 @@
-package com.example.webpagescannerapp;
+package com.example.webpagescannerapp.other;
 
 import android.app.Activity;
 import android.widget.ProgressBar;
@@ -33,11 +33,11 @@ import static java.lang.Thread.sleep;
 
 public class MyRunnable implements Runnable {
 
-    String url;
-    String textS;
+    String url;     // Url for search
+    String textS;   // Text for search
 
-    OkHttpClient okHttpClient;
-    Retrofit retrofit;
+    OkHttpClient okHttpClient;  // http client
+    Retrofit retrofit;      // retrofit
 
     Activity activity;
     RequestAdapter adapter;
@@ -64,13 +64,6 @@ public class MyRunnable implements Runnable {
         Call<MyRunnable.Page> pageCall = currentApi.get(HttpUrl.parse(url));
 
         try {
-//            String html;
-//            if (pageCall.execute().body() != null){ // To avoid already-executed
-//                html = pageCall.execute().body().content;
-//            }
-//            else {
-//                html = "Exception: NULL";
-//            }
             String html;
             try {
                 html = pageCall.clone().execute().body().content;
@@ -80,10 +73,10 @@ public class MyRunnable implements Runnable {
             }
 
             int matchesCount = getMatchesNumberFromHtml(html, textS);
-            //int threadNumber = Integer.parseInt(String.valueOf(this.getName().toCharArray()[this.getName().toCharArray().length-1]));
             String threadName = Thread.currentThread().getName();
             Status status = Status.STATUS_FOUND;
 
+            // Build RequestInfo object and add to recyclerView (via UI thread)
             RequestInfo requestInfo = new RequestInfo(url, matchesCount, threadName, status);
 
             activity.runOnUiThread(() -> {
@@ -97,6 +90,7 @@ public class MyRunnable implements Runnable {
             e.printStackTrace();
         }
 
+        // Sleeping for 1.2 sec for convenient demonstration
         try {
             sleep(1200);
         } catch (InterruptedException e) {
@@ -106,19 +100,18 @@ public class MyRunnable implements Runnable {
     }
 
     private void initOkHttp(){
-        okHttpClient = new OkHttpClient.Builder()
-                //.connectionPool(new ConnectionPool(100, 30, TimeUnit.SECONDS))
-                .build();
+        okHttpClient = new OkHttpClient.Builder().build();
     }
 
     private void initRetrofit(){
         retrofit = new Retrofit.Builder()
                 .baseUrl(HttpUrl.parse("https://www.bbc.com/"))
                 .client(this.okHttpClient)
-                .addConverterFactory(MyRunnable.PageAdapter.FACTORY)
+                .addConverterFactory(MyRunnable.PageAdapter.FACTORY)    // Http converter
                 .build();
     }
 
+    // Get matches number from page text
     private int getMatchesNumberFromHtml(String html, String text){
         Pattern textPattern = Pattern.compile(text);
         Matcher countTextMatcher = textPattern.matcher(html);
@@ -138,6 +131,7 @@ public class MyRunnable implements Runnable {
         }
     }
 
+    // Custom PageAdapter for Retrofit Factory Converter
     static final class PageAdapter implements Converter<ResponseBody, MyRunnable.Page> {
         static final Converter.Factory FACTORY = new Converter.Factory() {
             @Override
@@ -157,6 +151,7 @@ public class MyRunnable implements Runnable {
         }
     }
 
+    // Retrofit Api interface
     interface RequestApi {
         @GET
         Call<MyRunnable.Page> get(@Url HttpUrl url);

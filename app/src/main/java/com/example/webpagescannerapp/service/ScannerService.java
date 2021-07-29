@@ -23,9 +23,11 @@ import okhttp3.Request;
 
 public class ScannerService {
 
-    private OkHttpClient client;
-    //private ArrayList<AbstractMap.SimpleEntry<Integer, String>> list;
-    private LinkedHashMap<String, Integer> map;
+    // This service collects HashMap of pages that we should pass (number entered by user)
+    // Recursive method that collects url's by Breadth-Search-Tree method
+
+    private OkHttpClient client;    // http client
+    private LinkedHashMap<String, Integer> map;     // Our main map with data
 
     private String baseUrl, currentUrl;
     private int maxLinkNumber, currentLinkNumber;
@@ -34,30 +36,27 @@ public class ScannerService {
     public ScannerService(OkHttpClient client, String myBaseUrl, int myMaxLinksNumber){
         this.client = client;
         this.baseUrl = myBaseUrl;
-        currentUrl = myBaseUrl;
         this.maxLinkNumber = myMaxLinksNumber;
+        currentUrl = myBaseUrl;
         this.currentLinkNumber = 0;
-        //list = new ArrayList<>(maxLinkNumber);
         map = new LinkedHashMap<>(myMaxLinksNumber);
     }
 
-//    public ArrayList<AbstractMap.SimpleEntry<Integer, String>> getList() {
-//        return list;
-//    }
-
+    // Map Getter
     public LinkedHashMap<String, Integer> getMap() {
         return map;
     }
 
+    // Document Getter
     private Document getDocument() throws IOException {
         Request request = new Request.Builder()
                 .url(currentUrl)
                 .get().build();
 
-        //return Jsoup.connect(currentUrl).timeout(0).get();
         return Jsoup.parse(client.newCall(request).execute().body().string());
     }
 
+    // Recursive function for collecting data into map
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void fillMap(Activity activity) throws IOException, InterruptedException {
 
@@ -65,7 +64,6 @@ public class ScannerService {
 
         // Lvl 0 processing
         if (currentLevel == 0){
-            //map.add(new AbstractMap.SimpleEntry<>(currentLevel, baseUrl)); // Adding baseUrl(lvl 0)
             map.put(baseUrl, 0);
             currentLinkNumber++;
             currentLevel++;
@@ -81,12 +79,10 @@ public class ScannerService {
 
         }   // Lvl 1 processing
         else if (currentLevel == 1){
-
             final Elements[] links = new Elements[1];
             final int[] fullSize = new int[1];
             Runnable r = () -> {
                 try {
-                    //links[0] = getDocument().select("a[href]");
                     links[0] = getDocument().select("a[href^=http]"); // start with http
                     fullSize[0] = links[0].size();
                     activity.runOnUiThread(() -> Toast.makeText(activity, "fullSize :" + fullSize[0], Toast.LENGTH_SHORT)
@@ -95,6 +91,7 @@ public class ScannerService {
                     e.printStackTrace();
                 }
             };
+
             Thread t = new Thread(r);
             t.start();
             t.join();
@@ -130,23 +127,6 @@ public class ScannerService {
                         .filter(node -> node.getValue() == currentLevel-1)
                         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (x, y) -> y, LinkedHashMap::new));
 
-                //final Elements[] links = new Elements[1];
-                //final int[] fullSize = new int[1];
-//                Runnable r = () -> {
-//                    try {
-//                        links[0] = getDocument().select("a[href]");
-//                        //fullSize[0] = links[0].size();
-////                        activity.runOnUiThread(() -> Toast.makeText(activity, "fullSize :" + fullSize[0], Toast.LENGTH_SHORT)
-////                                .show());
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//                };
-//                Thread t = new Thread(r);
-//                t.start();
-//                t.join();
-
-
                 for (Map.Entry<String, Integer> node : mapOfCurrentLevel.entrySet()){
                     // Current url assign to entry with value of first match with url of current lvl
                     currentUrl = node.getKey();
@@ -154,7 +134,6 @@ public class ScannerService {
                     final Elements[] linksOfNode = new Elements[1];
                     Runnable r = () -> {
                         try {
-                            //linksOfNode[0] = getDocument().select("a[href]");
                             linksOfNode[0] = getDocument().select("a[href^=http]"); // start with http
                         } catch (IOException e) {
                             e.printStackTrace();

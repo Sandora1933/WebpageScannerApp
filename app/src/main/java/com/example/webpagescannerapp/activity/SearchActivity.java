@@ -14,21 +14,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.webpagescannerapp.MyRunnable;
+import com.example.webpagescannerapp.other.MyRunnable;
 import com.example.webpagescannerapp.R;
 import com.example.webpagescannerapp.service.ScannerService;
 import com.example.webpagescannerapp.adapter.RequestAdapter;
 import com.example.webpagescannerapp.model.RequestInfo;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
 import java.io.IOException;
-import java.util.AbstractMap;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,27 +30,26 @@ import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import okhttp3.OkHttpClient;
-import retrofit2.Retrofit;
 
 public class SearchActivity extends AppCompatActivity {
 
-    LinkedHashMap<String, Integer> nMap;
-    String urlOfResume;
-
-    String text;
-    int threadsNumber;
-
+    //Views
     RecyclerView recyclerView;
     ProgressBar progressBar;
 
-    // Control panel buttons
-    ImageButton pauseButton, playButton, stopButton;
+    ImageButton pauseButton, playButton, stopButton;    // Control panel buttons
 
-    ExecutorService executorService;
-    List<Runnable> terminatedWorkersList;
+    LinkedHashMap<String, Integer> nMap;    // Map from ScannerService
 
-    RequestAdapter requestAdapter;
-    ArrayList<RequestInfo> requestList;
+    //  Values for current iteration
+    String text;
+    int threadsNumber;
+
+    ExecutorService executorService;    // Executor service for several threads execution
+    List<Runnable> terminatedWorkersList;   // When process paused (For executor.shutDownNow())
+
+    RequestAdapter requestAdapter;      // Adapter for RecyclerView
+    ArrayList<RequestInfo> requestList;     // List for RecyclerView
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -66,40 +58,24 @@ public class SearchActivity extends AppCompatActivity {
         this.getSupportActionBar().hide();
         setContentView(R.layout.activity_search);
 
-        progressBar = findViewById(R.id.progressBar);
-
-        pauseButton = findViewById(R.id.pauseButton);
-        playButton = findViewById(R.id.playButton);
-        stopButton = findViewById(R.id.stopButton);
-
-        playButton.setEnabled(false);
-        playButton.setAlpha(0.5f);
+        initViews();
+        initControlPanel();
 
         Intent intent = getIntent();
 
+        // Getting data from intent
         String url = intent.getStringExtra("url");
-        urlOfResume = url;
-
         text = intent.getStringExtra("text");
         int maxPagesNumber = Integer.parseInt(intent.getStringExtra("max_pages_number"));
         threadsNumber = intent.getIntExtra("threads_number", 1);
 
+        // Setting http client
         OkHttpClient okHttpClient = new OkHttpClient();
 
-        // Check recycler view
-        requestList = new ArrayList<>();
+        // Setting recycler view
+        setUpRecyclerView();
 
-        requestAdapter = new RequestAdapter(this, requestList);
-
-        recyclerView = findViewById(R.id.recyclerView);
-        recyclerView.setAdapter(requestAdapter);
-
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        linearLayoutManager.setReverseLayout(true);
-        linearLayoutManager.setStackFromEnd(true);
-        recyclerView.setLayoutManager(linearLayoutManager);
-
-        // Building tree
+        // Building tree of url's
         ScannerService scanner1 = new ScannerService(okHttpClient, url, maxPagesNumber);
 
         try{
@@ -108,83 +84,52 @@ public class SearchActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        // Init progress bar
-        progressBar.setMin(0);
-        progressBar.setMax(scanner1.getMap().size());
-        progressBar.setProgress(0);
+        // Setting progress bar (horizontal)
+        setUpProgressBar(scanner1);
 
-        // Get map from ScannerService
+        // Getting map from ScannerService
         nMap = scanner1.getMap();
 
-        // Creating ExecutorService
+        // Creating and launching ExecutorService
         executorService = Executors.newFixedThreadPool(threadsNumber);
         launchExecutor();
-
-
-//        for (Map.Entry<String, Integer> node : nMap.entrySet()){
-//            String currentUrl = node.getKey();
-//            Runnable worker = new MyRunnable(currentUrl, SearchActivity.this, requestAdapter,
-//                    recyclerView, text, requestList, progressBar);
-//            executorService.execute(worker);
-//        }
-//
-//        executorService.shutdown();
-
-
-
-
-        // Wait until all threads are finish
-//        while (!executorService.isTerminated()) {
-//            // Waiting
-//        }
-
     }
 
-    private ArrayList<Map.Entry<Integer, String>> getTree(String baseUrl, int maxSize, int level){
-        final int[] elementCounter = new int[1];
-        final int[] levelCounter = new int[1];
-        elementCounter[0] = 0;
-        levelCounter[0] = level;
-
-        final ArrayList<Map.Entry<Integer, String>> resultTree = new ArrayList<>(maxSize);
-
-        resultTree.add(new AbstractMap.SimpleEntry<>(levelCounter[0], baseUrl));
-        elementCounter[0]++;
-        levelCounter[0]++;
-
-        new Thread(() -> {
-            Document document = null;
-            try {
-                document = Jsoup.connect(baseUrl).get();
-                Elements links = document.select("a[href]");
-                for (Element el : links){
-                    resultTree.add(new AbstractMap.SimpleEntry<>(levelCounter[0], el.attr("href")));
-                    elementCounter[0]++;
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-        });
-
-        return null;
+    public void initViews(){
+        progressBar = findViewById(R.id.progressBar);
+        pauseButton = findViewById(R.id.pauseButton);
+        playButton = findViewById(R.id.playButton);
+        stopButton = findViewById(R.id.stopButton);
+        recyclerView = findViewById(R.id.recyclerView);
     }
 
-    private ArrayList<LinkedHashMap<String, Integer>> splitMapIntoSmaller(LinkedHashMap<String, Integer> map, int number){
-        ArrayList<LinkedHashMap<String, Integer>> listOfSmallMaps = new ArrayList<>(number);
+    public void initControlPanel(){
+        playButton.setEnabled(false);
+        playButton.setAlpha(0.5f);
 
-        for (int i = 0; i < number; i++){
-            listOfSmallMaps.add(new LinkedHashMap<>());
-        }
+        pauseButton.setEnabled(true);
+        pauseButton.setAlpha(1.0f);
 
-        int iteration = 0;
-        for (Map.Entry<String, Integer> node : map.entrySet()){
-            int where = iteration % number; // where - is map number
-            listOfSmallMaps.get(where).put(node.getKey(), node.getValue());
-            iteration++;
-        }
+        stopButton.setEnabled(true);
+        stopButton.setAlpha(1.0f);
+    }
 
-        return listOfSmallMaps;
+    public void setUpRecyclerView(){
+        requestList = new ArrayList<>();
+
+        requestAdapter = new RequestAdapter(this, requestList);
+        recyclerView.setAdapter(requestAdapter);
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setReverseLayout(true);
+        linearLayoutManager.setStackFromEnd(true);
+        recyclerView.setLayoutManager(linearLayoutManager);
+    }
+
+    public void setUpProgressBar(ScannerService scanner){
+        progressBar.setMin(0);
+        progressBar.setMax(scanner.getMap().size());
+        progressBar.setProgress(0);
     }
 
     private void switchPlayPauseButtons(boolean isPlaying){
@@ -201,7 +146,6 @@ public class SearchActivity extends AppCompatActivity {
             pauseButton.setAlpha(0.5f);
         }
     }
-
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void playButtonClicked(View view) {
@@ -235,7 +179,7 @@ public class SearchActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void launchExecutor(){
 
-        // Start from paused_state
+        // Start from paused_state (if conditions are unsatisfied then start_state)
         if (terminatedWorkersList != null && terminatedWorkersList.size() > 0){
 
             executorService = Executors.newFixedThreadPool(threadsNumber);
@@ -253,8 +197,7 @@ public class SearchActivity extends AppCompatActivity {
                     recyclerView, text, requestList, progressBar);
             executorService.execute(worker);
 
-            // Remove this node (to maintain resume_state)
-            //nMap.remove(node.getKey());
+            // Remove this node via stream() -> (to maintain resume_state)
             LinkedHashMap<String, Integer> newMap = nMap.entrySet()
                     .stream()
                     .filter(e -> !e.getKey().equals(currentUrl))

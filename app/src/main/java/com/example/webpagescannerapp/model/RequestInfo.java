@@ -1,7 +1,5 @@
 package com.example.webpagescannerapp.model;
 
-import com.example.webpagescannerapp.model.Status;
-
 public class RequestInfo {
     private String url;
     private int matchesCount;

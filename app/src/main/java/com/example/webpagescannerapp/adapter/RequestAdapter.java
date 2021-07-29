@@ -17,19 +17,15 @@ import java.util.ArrayList;
 
 public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestViewHolder> {
 
-    Context context;
-    ArrayList<RequestInfo> requestList;
-
-    public RequestAdapter(Context context){
-        this.context = context;
-        requestList = new ArrayList<>();
-    }
+    Context context;    // Activity context
+    ArrayList<RequestInfo> requestList;     // List to work with recycler view
 
     public RequestAdapter(Context context, ArrayList<RequestInfo> list){
         this.context = context;
         requestList = list;
     }
 
+    // ViewHolder container for RequestInfo elements from list
     public class RequestViewHolder extends RecyclerView.ViewHolder{
 
         TextView urlTextView, matchesNumberTextView, threadsNumber;
@@ -57,7 +53,6 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestV
         RequestInfo requestInfo = requestList.get(position);
         holder.urlTextView.setText(requestInfo.getUrl());
         holder.matchesNumberTextView.setText("Matches : " + requestInfo.getMatchesCount());
-        //holder.threadsNumber.setText("Thread [" + requestInfo.getThreadNumber() + "]");
         holder.threadsNumber.setText(requestInfo.getThreadName());
 
         switch(requestInfo.getStatus()){
