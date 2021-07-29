@@ -65,16 +65,21 @@ public class MyRunnable implements Runnable {
 
         try {
             String html;
+            int matchesCount;
+            String threadName;
+            Status status;
             try {
                 html = pageCall.clone().execute().body().content;
+                matchesCount = getMatchesNumberFromHtml(html, textS);
+                threadName = Thread.currentThread().getName();
+                status = (matchesCount > 0)? Status.STATUS_FOUND : Status.STATUS_NOT_FOUND;
             }
-            catch (NullPointerException ex){
+            catch (Exception ex){
                 html = ex.getMessage();
+                matchesCount = -1;
+                threadName = Thread.currentThread().getName();
+                status = Status.STATUS_ERROR;
             }
-
-            int matchesCount = getMatchesNumberFromHtml(html, textS);
-            String threadName = Thread.currentThread().getName();
-            Status status = Status.STATUS_FOUND;
 
             // Build RequestInfo object and add to recyclerView (via UI thread)
             RequestInfo requestInfo = new RequestInfo(url, matchesCount, threadName, status);
@@ -86,7 +91,7 @@ public class MyRunnable implements Runnable {
                 progressBar.incrementProgressBy(1);
             });
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
