@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.webpagescannerapp.other.MyRunnable;
 import com.example.webpagescannerapp.R;
+import com.example.webpagescannerapp.service.RequestService;
 import com.example.webpagescannerapp.service.ScannerService;
 import com.example.webpagescannerapp.adapter.RequestAdapter;
 import com.example.webpagescannerapp.model.RequestInfo;
@@ -193,8 +194,13 @@ public class SearchActivity extends AppCompatActivity {
         for (Map.Entry<String, Integer> node : nMap.entrySet()){
             String currentUrl = node.getKey();
 
-            Runnable worker = new MyRunnable(currentUrl, SearchActivity.this, requestAdapter,
-                    recyclerView, text, requestList, progressBar);
+//            Runnable worker = new MyRunnable(currentUrl, SearchActivity.this, requestAdapter,
+//                    recyclerView, text, requestList, progressBar);
+
+            RequestService requestService = new RequestService(currentUrl, SearchActivity.this,
+                    requestAdapter, recyclerView, text, requestList, progressBar);
+
+            MyRunnable worker = new MyRunnable(requestService);
             executorService.execute(worker);
 
             // Remove this node via stream() -> (to maintain resume_state)
