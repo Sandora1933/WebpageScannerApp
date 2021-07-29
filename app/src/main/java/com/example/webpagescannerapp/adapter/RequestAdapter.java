@@ -52,6 +52,12 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestV
     public void onBindViewHolder(@NonNull RequestViewHolder holder, int position) {
         RequestInfo requestInfo = requestList.get(position);
         holder.urlTextView.setText(requestInfo.getUrl());
+
+        // If error then show in red color
+        if (requestInfo.getMatchesCount().matches("[A-Za-z]")){
+            holder.matchesNumberTextView.setTextColor(context.getResources().getColor(R.color.colorRed));
+        }
+
         holder.matchesNumberTextView.setText("Matches : " + requestInfo.getMatchesCount());
         holder.threadsNumber.setText(requestInfo.getThreadName());
 

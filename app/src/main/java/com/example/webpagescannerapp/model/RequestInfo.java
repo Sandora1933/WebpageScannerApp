@@ -2,13 +2,13 @@ package com.example.webpagescannerapp.model;
 
 public class RequestInfo {
     private String url;
-    private int matchesCount;
+    private String matchesCountStr;
     private String threadName;
     private Status status;
 
-    public RequestInfo(String url, int matchesCount, String threadName, Status status) {
+    public RequestInfo(String url, String matchesCountStr, String threadName, Status status) {
         this.url = url;
-        this.matchesCount = matchesCount;
+        this.matchesCountStr = matchesCountStr;
         this.threadName = threadName;
         this.status = status;
     }
@@ -17,8 +17,8 @@ public class RequestInfo {
         return url;
     }
 
-    public int getMatchesCount() {
-        return matchesCount;
+    public String getMatchesCount() {
+        return matchesCountStr;
     }
 
     public String getThreadName() {

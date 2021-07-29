@@ -65,24 +65,24 @@ public class MyRunnable implements Runnable {
 
         try {
             String html;
-            int matchesCount;
+            String matchesCountStr;
             String threadName;
             Status status;
             try {
                 html = pageCall.clone().execute().body().content;
-                matchesCount = getMatchesNumberFromHtml(html, textS);
+                matchesCountStr = getMatchesNumberFromHtml(html, textS);
                 threadName = Thread.currentThread().getName();
-                status = (matchesCount > 0)? Status.STATUS_FOUND : Status.STATUS_NOT_FOUND;
+                status = (Integer.parseInt(matchesCountStr) > 0)? Status.STATUS_FOUND : Status.STATUS_NOT_FOUND;
             }
             catch (Exception ex){
                 html = ex.getMessage();
-                matchesCount = -1;
+                matchesCountStr = ex.getMessage();
                 threadName = Thread.currentThread().getName();
                 status = Status.STATUS_ERROR;
             }
 
             // Build RequestInfo object and add to recyclerView (via UI thread)
-            RequestInfo requestInfo = new RequestInfo(url, matchesCount, threadName, status);
+            RequestInfo requestInfo = new RequestInfo(url, matchesCountStr, threadName, status);
 
             activity.runOnUiThread(() -> {
                 adapterList.add(requestInfo);
@@ -117,7 +117,7 @@ public class MyRunnable implements Runnable {
     }
 
     // Get matches number from page text
-    private int getMatchesNumberFromHtml(String html, String text){
+    private String getMatchesNumberFromHtml(String html, String text){
         Pattern textPattern = Pattern.compile(text);
         Matcher countTextMatcher = textPattern.matcher(html);
 
@@ -126,7 +126,7 @@ public class MyRunnable implements Runnable {
             count++;
         }
 
-        return count;
+        return String.valueOf(count);
     }
 
     static class Page {
