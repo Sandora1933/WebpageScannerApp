@@ -45,3 +45,5 @@
 Для тестирования внутри потоков можно использовать например Thread Weaver<br/>
 
 ## Screenshots
+![](screenshots/web1.png)
+![](screenshots/web2.png)
