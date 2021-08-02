@@ -23,7 +23,6 @@ public class MainActivity extends AppCompatActivity {
     EditText urlEditText, textEditText, maxPageNumberEditText;
     NumberPicker threadsNumberPicker;
 
-    @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,7 +47,6 @@ public class MainActivity extends AppCompatActivity {
         maxPageNumberEditText.setTransformationMethod(new NumericKeyBoardTransformationMethod());
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.Q)
     public void setUpNumberPicker(){
         threadsNumberPicker.setMinValue(1);
         threadsNumberPicker.setMaxValue(64);

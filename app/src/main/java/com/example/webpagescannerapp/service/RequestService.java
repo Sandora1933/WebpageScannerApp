@@ -3,6 +3,7 @@ package com.example.webpagescannerapp.service;
 import android.app.Activity;
 import android.content.Context;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -126,14 +127,14 @@ public class RequestService {
             });
 
         } catch (Exception e) {
-            e.printStackTrace();
+            Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
         }
 
         // Sleeping for 1.2 sec for convenient demonstration
         try {
             sleep(1200);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -169,22 +170,5 @@ public class RequestService {
         @GET
         Call<RequestService.Page> get(@Url HttpUrl url);
     }
-
-    //    private ArrayList<LinkedHashMap<String, Integer>> splitMapIntoSmaller(LinkedHashMap<String, Integer> map, int number){
-//        ArrayList<LinkedHashMap<String, Integer>> listOfSmallMaps = new ArrayList<>(number);
-//
-//        for (int i = 0; i < number; i++){
-//            listOfSmallMaps.add(new LinkedHashMap<>());
-//        }
-//
-//        int iteration = 0;
-//        for (Map.Entry<String, Integer> node : map.entrySet()){
-//            int where = iteration % number; // where - is map number
-//            listOfSmallMaps.get(where).put(node.getKey(), node.getValue());
-//            iteration++;
-//        }
-//
-//        return listOfSmallMaps;
-//    }
 
 }

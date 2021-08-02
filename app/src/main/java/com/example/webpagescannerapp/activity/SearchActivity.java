@@ -52,7 +52,6 @@ public class SearchActivity extends AppCompatActivity {
     RequestAdapter requestAdapter;      // Adapter for RecyclerView
     ArrayList<RequestInfo> requestList;     // List for RecyclerView
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,7 +81,7 @@ public class SearchActivity extends AppCompatActivity {
         try{
             scanner1.fillMap(SearchActivity.this);
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
         }
 
         // Setting progress bar (horizontal)
@@ -148,7 +147,6 @@ public class SearchActivity extends AppCompatActivity {
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     public void playButtonClicked(View view) {
         switchPlayPauseButtons(true);
         resumeExecutor();
@@ -172,12 +170,10 @@ public class SearchActivity extends AppCompatActivity {
         terminatedWorkersList = executorService.shutdownNow();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     private void resumeExecutor(){
         launchExecutor();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     private void launchExecutor(){
 
         // Start from paused_state (if conditions are unsatisfied then start_state)

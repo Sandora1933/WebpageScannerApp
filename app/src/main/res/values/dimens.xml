@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="baseInputEditTextHeight">40dp</dimen>
+    <dimen name="mediumViewDistance">32dp</dimen>
+    <dimen name="bigViewDistance">64dp</dimen>
+    <dimen name="recyclerViewHeight">500dp</dimen>
+    <dimen name="maxPageNumberEditTextWidth">100dp</dimen>
+    <dimen name="progressBarHeight">30dp</dimen>
+    <dimen name="controlButtonsLayoutHeight">100dp</dimen>
+
+    <dimen name="progressTextViewSize">22sp</dimen>
+    <dimen name="titleTextViewSize">35sp</dimen>
+    <dimen name="pageAndThreadTextViewsSize">18sp</dimen>
+</resources>

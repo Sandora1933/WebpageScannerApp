@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">WebpageScannerApp</string>
+    <string name="button_search_text">search</string>
+    <string name="threads_number_view_text">Enter \nmax threads number :</string>
+    <string name="max_pages_view_text">Enter\nmax pages number :</string>
+    <string name="text_for_search_hint">\tEnter text please</string>
+    <string name="url_for_search_hint">\tEnter url please</string>
+    <string name="progress_header_text">Execution progress</string>
 </resources>

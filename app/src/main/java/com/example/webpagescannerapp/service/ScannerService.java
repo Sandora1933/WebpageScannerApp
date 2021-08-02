@@ -57,7 +57,6 @@ public class ScannerService {
     }
 
     // Recursive function for collecting data into map
-    @RequiresApi(api = Build.VERSION_CODES.N)
     public void fillMap(Activity activity) throws IOException, InterruptedException {
 
         //Assume that maxLinkNumber >= 1
@@ -136,7 +135,7 @@ public class ScannerService {
                         try {
                             linksOfNode[0] = getDocument().select("a[href^=http]"); // start with http
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     };
                     Thread t = new Thread(r);
