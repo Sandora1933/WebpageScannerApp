@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.webpagescannerapp.databinding.ActivitySearchBinding;
 import com.example.webpagescannerapp.other.MyRunnable;
 import com.example.webpagescannerapp.R;
 import com.example.webpagescannerapp.service.RequestService;
@@ -34,11 +35,7 @@ import okhttp3.OkHttpClient;
 
 public class SearchActivity extends AppCompatActivity {
 
-    //Views
-    RecyclerView recyclerView;
-    ProgressBar progressBar;
-
-    ImageButton pauseButton, playButton, stopButton;    // Control panel buttons
+    ActivitySearchBinding binding;
 
     LinkedHashMap<String, Integer> nMap;    // Map from ScannerService
 
@@ -56,9 +53,12 @@ public class SearchActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.getSupportActionBar().hide();
-        setContentView(R.layout.activity_search);
 
-        initViews();
+        binding = ActivitySearchBinding.inflate(getLayoutInflater());
+//        setContentView(R.layout.activity_search);
+        setContentView(binding.getRoot());
+
+        //initViews();
         initControlPanel();
 
         Intent intent = getIntent();
@@ -95,55 +95,55 @@ public class SearchActivity extends AppCompatActivity {
         launchExecutor();
     }
 
-    public void initViews(){
-        progressBar = findViewById(R.id.progressBar);
-        pauseButton = findViewById(R.id.pauseButton);
-        playButton = findViewById(R.id.playButton);
-        stopButton = findViewById(R.id.stopButton);
-        recyclerView = findViewById(R.id.recyclerView);
-    }
+//    public void initViews(){
+//        progressBar = findViewById(R.id.progressBar);
+//        pauseButton = findViewById(R.id.pauseButton);
+//        playButton = findViewById(R.id.playButton);
+//        stopButton = findViewById(R.id.stopButton);
+//        recyclerView = findViewById(R.id.recyclerView);
+//    }
 
     public void initControlPanel(){
-        playButton.setEnabled(false);
-        playButton.setAlpha(0.5f);
+        binding.playButton.setEnabled(false);
+        binding.playButton.setAlpha(0.5f);
 
-        pauseButton.setEnabled(true);
-        pauseButton.setAlpha(1.0f);
+        binding.pauseButton.setEnabled(true);
+        binding.pauseButton.setAlpha(1.0f);
 
-        stopButton.setEnabled(true);
-        stopButton.setAlpha(1.0f);
+        binding.stopButton.setEnabled(true);
+        binding.stopButton.setAlpha(1.0f);
     }
 
     public void setUpRecyclerView(){
         requestList = new ArrayList<>();
 
         requestAdapter = new RequestAdapter(this, requestList);
-        recyclerView.setAdapter(requestAdapter);
+        binding.recyclerView.setAdapter(requestAdapter);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setReverseLayout(true);
         linearLayoutManager.setStackFromEnd(true);
-        recyclerView.setLayoutManager(linearLayoutManager);
+        binding.recyclerView.setLayoutManager(linearLayoutManager);
     }
 
     public void setUpProgressBar(ScannerService scanner){
-        progressBar.setMin(0);
-        progressBar.setMax(scanner.getMap().size());
-        progressBar.setProgress(0);
+        binding.progressBar.setMin(0);
+        binding.progressBar.setMax(scanner.getMap().size());
+        binding.progressBar.setProgress(0);
     }
 
     private void switchPlayPauseButtons(boolean isPlaying){
         if (isPlaying){
-            playButton.setEnabled(false);
-            playButton.setAlpha(0.5f);
-            pauseButton.setEnabled(true);
-            pauseButton.setAlpha(1.0f);
+            binding.playButton.setEnabled(false);
+            binding.playButton.setAlpha(0.5f);
+            binding.pauseButton.setEnabled(true);
+            binding.pauseButton.setAlpha(1.0f);
         }
         else {
-            playButton.setEnabled(true);
-            playButton.setAlpha(1.0f);
-            pauseButton.setEnabled(false);
-            pauseButton.setAlpha(0.5f);
+            binding.playButton.setEnabled(true);
+            binding.playButton.setAlpha(1.0f);
+            binding.pauseButton.setEnabled(false);
+            binding.pauseButton.setAlpha(0.5f);
         }
     }
 
@@ -160,10 +160,10 @@ public class SearchActivity extends AppCompatActivity {
     public void stopButtonClicked(View view){
         executorService.shutdownNow();
         Toast.makeText(this, "FULL STOP", Toast.LENGTH_SHORT).show();
-        stopButton.setAlpha(0.5f);
-        stopButton.setEnabled(false);
-        pauseButton.setAlpha(0.5f);
-        pauseButton.setEnabled(false);
+        binding.stopButton.setAlpha(0.5f);
+        binding.stopButton.setEnabled(false);
+        binding.pauseButton.setAlpha(0.5f);
+        binding.pauseButton.setEnabled(false);
     }
 
     private void pauseExecutor(){
@@ -194,7 +194,7 @@ public class SearchActivity extends AppCompatActivity {
 //                    recyclerView, text, requestList, progressBar);
 
             RequestService requestService = new RequestService(currentUrl, SearchActivity.this,
-                    requestAdapter, recyclerView, text, requestList, progressBar);
+                    requestAdapter, binding.recyclerView, text, requestList, binding.progressBar);
 
             MyRunnable worker = new MyRunnable(requestService);
             executorService.execute(worker);
